@@ -15,7 +15,7 @@ $VHDDisk = Get-DiskImage -ImagePath $RefVHDXPath | Get-Disk
 $VHDDiskNumber = [string]$VHDDisk.Number
 Initialize-Disk -Number $VHDDiskNumber -PartitionStyle GPT
 $VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
--AssignDriveLetter -Size 500 -IsActive |
+-AssignDriveLetter -Size 500 |
 
 Format-Volume -Confirm:$false
 $VHDVolume = [string]$VHDDrive.DriveLetter + ":"
@@ -25,10 +25,13 @@ Write-Verbose 'THIS WILL TAKE SOME TIME!'
 Dism.exe /apply-Image /ImageFile:$ISODrive\Sources\install.wim /index:$Index /ApplyDir:$VHDVolume\
 Write-Verbose "Finished at [$(Get-Date)]"
 
+# Finishing touches, skapar Windows Defender på den nya partitionen och dismountar alla variabler
 BCDBoot.exe $VHDVolume\Windows /s $VHDVolume /f BIOS
 Dismount-DiskImage -ImagePath $ISO
 Dismount-DiskImage -ImagePath $RefVHDXPath
 Get-ChildItem $RefVHDXPath
+
+# Skriver hur lång tid det tog för att skapa partitionen
 $FinishTime = Get-Date
 $TT = $FinishTime - $StartTime
 Write-Verbose  "Finishing at $FinishTime"
@@ -60,6 +63,6 @@ new-partition -disknumber 0 -size 500gb -driveletter S | format-volume -filesyst
 # Kolla på partitionen
 get-partition -disknumber 0
 
-# Ändra storleken på en partition
+# Ändrar storleken på en partition
 get-partition -disknumber 0
 get-partition -driveletter S | resize-partition -size XXgb
