@@ -1,0 +1,27 @@
+select disk | where-object {($_.Number -is "0")}
+
+create partition efi size=500
+format quick fs=fat32 label="System"
+assign letter="S"
+create partition msr size=16
+create partition primary 
+shrink minimum=500
+format quick fs=ntfs label="Windows"
+assign letter="W"
+list volume
+exit
+
+Initialize-Disk -Number $VHDDiskNumber -PartitionStyle MBR
+$VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
+-DriveLetter S -Size 500 |
+Format-Volume -Confirm:$false
+
+// Skapar en partition på 500GB med namnet System och S:
+new-partition -disknumber 0 -size 500gb -driveletter S | format-volume -filesystem NTFS -new filesystemlabel System
+
+// Kolla på partitionen
+get-partition -disknumber 0
+
+// Ändra storleken på en partition
+get-partition -disknumber 0
+get-partition -driveletter S | resize-partition -size XXgb
