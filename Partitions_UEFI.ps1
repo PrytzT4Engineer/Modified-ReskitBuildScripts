@@ -39,8 +39,10 @@ Write-verbose  "Creating base image took [$($TT.totalminutes.tostring('n2'))] mi
 
 
 
+# Väljer disk 0
 select disk | where-object {($_.Number -is "0")}
 
+# Skräp
 create partition efi size=500
 format quick fs=fat32 label="System"
 assign letter="S"
@@ -52,6 +54,7 @@ assign letter="W"
 list volume
 exit
 
+# Skräp
 Initialize-Disk -Number $VHDDiskNumber -PartitionStyle GPT
 $VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
 -DriveLetter S -Size 500 |
