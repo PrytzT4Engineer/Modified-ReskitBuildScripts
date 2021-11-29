@@ -23,38 +23,38 @@ Initialize-Disk -Number $VHDDiskNumber -PartitionStyle GPT
 @"
 Select disk $VHDDiskNumber
 Convert GPT
-Create partition efi size=550MB
+Create partition efi size=550
 Format FS=FAT32 quick label="System"
 Assign letter="S"
-Create partition MSR size=120MB
-Set id="{e3c9e316-0b5c-4db8-817d-f92df00215ae}" 
+Create partition MSR size=120
+Set id="e3c9e316-0b5c-4db8-817d-f92df00215ae" 
 GPT attributes=0x8000000000000001
 Create partition primary
-Shrink minimum=1GB
+Shrink minimum=1024
 Format fs=ntfs quick label="Windows"
 Assign letter="W"
-Set id="{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}"
+Set id="ebd0a0a2-b9e5-4433-87c0-68b6b72699c7"
 GPT attributes=0x8000000000000001
 Create partition primary
 Format fs=ntfs quick label="Recovery"
 Assign letter="R"
-Set id="{de94bba4-06d1-4d40-a16a-bfd50179d6ac}"
+Set id="de94bba4-06d1-4d40-a16a-bfd50179d6ac"
 GPT attributes=0x8000000000000001
 List volume
 Exit
 "@ | diskpart.exe | Out-Null
 
 # MSR
-#New-Partition -DiskNumber $VHDDiskNumber `
-#-Size 120MB -GptType "{e3c9e316-0b5c-4db8-817d-f92df00215ae}" 
+# New-Partition -DiskNumber $VHDDiskNumber `
+# -Size 120MB -GptType "{e3c9e316-0b5c-4db8-817d-f92df00215ae}" 
 
 # Datavolym
-#$VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
-#-AssignDriveLetter -UseMaximumSize -GptType "{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}" # Kör shrink
+# $VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
+# -AssignDriveLetter -UseMaximumSize -GptType "{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}" # Kör shrink
 
 # Recovery
-#New-Partition -DiskNumber $VHDDiskNumber `
-#-UseMaximumSize -GptType "{de94bba4-06d1-4d40-a16a-bfd50179d6ac}" |
+# New-Partition -DiskNumber $VHDDiskNumber `
+# -UseMaximumSize -GptType "{de94bba4-06d1-4d40-a16a-bfd50179d6ac}" |
 
 # Formaterar volymen
 Format-Volume -Confirm:$false 
