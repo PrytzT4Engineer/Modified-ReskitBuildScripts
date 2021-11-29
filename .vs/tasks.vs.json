@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-Partitions_UEFI",
+      "appliesTo": "Partitions_UEFI.ps1",
+      "type": "launch"
+    }
+  ]
+}

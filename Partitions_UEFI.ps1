@@ -1,32 +1,60 @@
-# Variabler
-$ISO = 'D:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782' 
+# Variabler (ändra path)
+$ISO = 'D:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782.iso' 
 $RefVhdxPath = 'D:\Build\Ref2022.vhdx'
 
 # Startar tidtagning
 $StartTime = Get-Date
 Write-Verbose "Beginning at $StartTime"
 Import-Module -Name DISM
-Mount-DiskImage -ImagePath $iso
+Mount-DiskImage -ImagePath $ISO
 $ISOImage = Get-DiskImage -ImagePath $ISO | Get-Volume
 
-$VMDisk01 = New-VHD –Path $RefVHDXPath -Size 500GB
+# Sätter Drivebokstaven (exempel D:)
+$ISODrive = [string]$ISOImage.DriveLetter + ":"
+
+$VMDisk01 = New-VHD –Path $RefVHDXPath -Size 64GB
+Write-Verbose "Created VHDX File [$($vmdisk01.path)]"
 Mount-DiskImage -ImagePath $RefVHDXPath
 $VHDDisk = Get-DiskImage -ImagePath $RefVHDXPath | Get-Disk
 $VHDDiskNumber = [string]$VHDDisk.Number
 Initialize-Disk -Number $VHDDiskNumber -PartitionStyle GPT
+
+# System
+New-Partition -DiskNumber $VHDDiskNumber `
+-Size 550MB -GptType "{c12a7328-f81f-11d2-ba4b-00a0c93ec93b}" # Använd FAT32
+
+# MSR
+New-Partition -DiskNumber $VHDDiskNumber `
+-Size 120MB -GptType "{e3c9e316-0b5c-4db8-817d-f92df00215ae}" 
+
+# Datavolym
 $VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
--AssignDriveLetter -Size 500 |
+-AssignDriveLetter -UseMaximumSize -GptType "{ebd0a0a2-b9e5-4433-87c0-68b6b72699c7}" # Kör shrink
 
-Format-Volume -Confirm:$false
-$VHDVolume = [string]$VHDDrive.DriveLetter + ":"
+# Recovery
+New-Partition -DiskNumber $VHDDiskNumber `
+-UseMaximumSize -GptType "{de94bba4-06d1-4d40-a16a-bfd50179d6ac}" |
 
+# Formaterar volymen
+Format-Volume -Confirm:$false # Använd Disk Part för BARA system
+$VHDVolume = [string]$VHDDrive.DriveLetter + ":" # Formatera System, Datavolym och Recovery (använd pipes |)
+
+# Hämtar Windows versionerna
+$IndexList = Get-WindowsImage -ImagePath $ISODrive\sources\install.wim
+Write-Verbose "$($indexList.count) images found"
+
+# Visar Windows versioner (Home, Professional, Standard Server)
+$item = $IndexList | Out-GridView -OutputMode Single
+$index = $item.ImageIndex
+
+# Tar tiden för DISM:en
 Write-Verbose "Started at [$(Get-Date)]"
 Write-Verbose 'THIS WILL TAKE SOME TIME!'
 Dism.exe /apply-Image /ImageFile:$ISODrive\Sources\install.wim /index:$Index /ApplyDir:$VHDVolume\
 Write-Verbose "Finished at [$(Get-Date)]"
 
-# Finishing touches, skapar Windows Defender på den nya partitionen och dismountar alla variabler
-BCDBoot.exe $VHDVolume\Windows /s $VHDVolume /f BIOS
+# Finishing touches, installerar firmware för UEFI
+BCDBoot.exe $VHDVolume\Windows /s $VHDVolume /f UEFI
 Dismount-DiskImage -ImagePath $ISO
 Dismount-DiskImage -ImagePath $RefVHDXPath
 Get-ChildItem $RefVHDXPath
@@ -36,36 +64,3 @@ $FinishTime = Get-Date
 $TT = $FinishTime - $StartTime
 Write-Verbose  "Finishing at $FinishTime"
 Write-verbose  "Creating base image took [$($TT.totalminutes.tostring('n2'))] minutes"
-
-
-
-# Väljer disk 0
-select disk | where-object {($_.Number -is "0")}
-
-# Skräp
-create partition efi size=500
-format quick fs=fat32 label="System"
-assign letter="S"
-create partition msr size=16
-create partition primary 
-shrink minimum=500
-format quick fs=ntfs label="Windows"
-assign letter="W"
-list volume
-exit
-
-# Skräp
-Initialize-Disk -Number $VHDDiskNumber -PartitionStyle GPT
-$VHDDrive = New-Partition -DiskNumber $VHDDiskNumber `
--DriveLetter S -Size 500 |
-Format-Volume -Confirm:$false
-
-# Skapar en partition på 500GB med namnet System och S:
-new-partition -disknumber 0 -size 500gb -driveletter S | format-volume -filesystem NTFS -new filesystemlabel System
-
-# Kolla på partitionen
-get-partition -disknumber 0
-
-# Ändrar storleken på en partition
-get-partition -disknumber 0
-get-partition -driveletter S | resize-partition -size XXgb
