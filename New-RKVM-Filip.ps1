@@ -26,13 +26,15 @@ Function New-RKVM {
   [Cmdletbinding()]
   Param ( 
     $Name             = 'DC1',
-    $VmPath           = 'D:\v8',
-    $ReferenceVHD     = 'D:\v8\Ref2020.vhdx',
+    $VmPath           = 'D:\VMs',
+    $ReferenceVHD     = 'D:\Build',
     $Network          = 'Internal',
     [int64] $VMMemory = 1024mb,
-    $UnattendXML      = '"C:\v8\unattend.xml',
-    $IPAddr           = '10.10.10.10/24',
-    $DnsSvr           = '10.10.10.10'
+    $UnattendXML      = 'D:\Build\unattend.xml',
+    $IPAddr           = '192.168.206.44/24',
+    $DnsSvr           = '192.168.206.21',
+    $CPUCount = 4,
+    $NHV = $false
   )
 
   $StartTime = Get-Date
@@ -58,7 +60,7 @@ Function New-RKVM {
   Write-Verbose "Creating VM           : [$Name]"
   Write-Verbose "VHD path              : [$VHDPath]"
   Write-Verbose "VM Path               : [$Path\$Name]"
-  $VM = New-VM –Name $Name –MemoryStartupBytes $VMMemory –VHDPath $VHDPath -SwitchName $Network -Path $vmPath 
+  $VM = New-VM –Name $Name –MemoryStartupBytes $VMMemory –VHDPath $VHDPath -Generation2 -SwitchName $Network -Path $vmPath 
   Write-Verbose "New VM Created        : [$($VM.Name)]"
 
   # Mount the newly created VHD on the local machine
@@ -140,18 +142,18 @@ Write-Verbose ("Creating VM ($name) took {0} seconds" -f ($FinishTime - $Startti
 #       CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS     #
 
 # Location of Server 2012 DVD Iso Image
-$Iso = 'D:\Builds\Windows_InsiderPreview_Server_vNext_en-us_20303.iso'
+$Iso = 'D:\Build\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782'
 
 # Where we put the reference VHDX
 # Be careful here - make sure this is the file you just created in Create-ReferenceVHDX
-$Ref = 'D:\v8\Ref2022.vhdx'
+$Ref = 'D:\Build\Ref2022.vhdx'
 
 # Path were VMs, VHDXs and unattend.txt files live
-$Path = 'D:\V8'
+$Path = 'D:\Build'
 
 # Location of Unattend.xml - first for workstation systems, second for domain joined systems 
-$Una   = 'D:\v8\UnAttend.xml'     # workgroup memeber
-$Unadj = 'D:\v8\UnAttend.dj.xml'  # joined to reskit.org
+$Una   = 'D:\Build\UnAttend.xml'     # workgroup memeber
+$Unadj = 'D:\Build\UnAttend.dj.xml'  # joined to reskit.org
 
 #       CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS     #
 #######################################################################################################
@@ -182,7 +184,8 @@ $Start = Get-Date
 #  FOR GENERAL USE 
 #    Create DC1 as NON-domain joined
 # New-RKVM -name 'DC1'  -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $una -Verbose -IPAddr '10.10.10.10/24' -DNSSvr 10.10.10.10  -VMMemory 4gb 
-#
+New-RKVM -name 'Temp' -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.44' -DnsSvr 192.168.206.21 -VMMemory 4GB
+
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
 # And two general purpose servers
