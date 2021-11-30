@@ -1,11 +1,13 @@
 Function New-RefVHDX {
 
+    # Parametrar
     [cmdletbinding()]
     param(  
          [string] $iso = $(throw 'no ISO specified'),
          [string] $RefVhdxPath = $(throw 'no reference disk specified')
          )
 
+# DISM
 Import-Module -Name DISM
 Mount-DiskImage -ImagePath $ISO
 $ISOImage = Get-DiskImage -ImagePath $ISO | Get-Volume
@@ -13,13 +15,13 @@ $ISOImage = Get-DiskImage -ImagePath $ISO | Get-Volume
 # Sätter Drivebokstaven (exempel D:)
 $ISODrive = [string]$ISOImage.DriveLetter + ':'
 
+# Paths och disknummer
 $VMDisk01 = New-VHD -Path $RefVHDXPath -Size 64GB
 Mount-DiskImage -ImagePath $RefVHDXPath
 $VHDDisk = Get-DiskImage -ImagePath $RefVHDXPath | Get-Disk
 $VHDDiskNumber = [string]$VHDDisk.Number
 
 # Partitioner via Disk Part
-
 @"
 select disk $VHDDiskNumber
 convert gpt
@@ -45,17 +47,18 @@ list volume
 exit
 "@ | diskpart.exe
 
+# Ger driveletters
 $VHDVolume = 'W:'
 $SystemPartition = 'S:'
 
+# Windows versionerna (Windows 10, Pro, Education)
 $IndexList = Get-WindowsImage -ImagePath $ISODrive\sources\install.wim
-
 $item = $IndexList | Out-GridView -OutputMode Single
 $index = $item.ImageIndex
 
-
 Dism.exe /apply-Image /ImageFile:$ISODrive\Sources\install.wim /index:$Index /ApplyDir:$VHDVolume\
 
+# Bootar System partitionen S:
 BCDBoot.exe $VHDVolume\Windows /s $SystemPartition /f UEFI
 Dismount-DiskImage -ImagePath $ISO
 Dismount-DiskImage -ImagePath $RefVHDXPath
@@ -63,7 +66,9 @@ Get-ChildItem $RefVHDXPath
 
 }
 
+# Variabler
 $iso = 'd:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782.iso'
 $RefVhdxPath = 'd:\build\ref2019.vhdx'
 
+# Anropar funktionen
 New-RefVHDX -iso $Iso -RefVHDXPath $RefVhdxPath -Verbose

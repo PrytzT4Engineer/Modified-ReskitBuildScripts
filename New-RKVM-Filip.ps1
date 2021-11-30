@@ -30,7 +30,7 @@ Function New-RKVM {
     $ReferenceVHD     = 'D:\Build',
     $Network          = 'Internal',
     [int64] $VMMemory = 1024mb,
-    $UnattendXML      = 'D:\Build\unattend.xml',
+    $UnattendXML      = 'D:\Scripts\unattend.xml',
     $IPAddr           = '192.168.206.44/24',
     $DnsSvr           = '192.168.206.21',
     $CPUCount = 4,
@@ -152,8 +152,8 @@ $Ref = 'D:\Build\Ref2022.vhdx'
 $Path = 'D:\Build'
 
 # Location of Unattend.xml - first for workstation systems, second for domain joined systems 
-$Una   = 'D:\Build\UnAttend.xml'     # workgroup memeber
-$Unadj = 'D:\Build\UnAttend.dj.xml'  # joined to reskit.org
+$Una   = 'D:\Scripts\UnAttend.xml'     # workgroup memeber
+$Unadj = 'D:\Scripts\UnAttend.dj.xml'  # joined to reskit.org
 
 #       CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS     #
 #######################################################################################################
@@ -188,6 +188,8 @@ New-RKVM -name 'Temp' -VmPath $path -ReferenceVHD $ref -Network "External" -Unat
 
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
+# New-RKVM -name "SQL" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '192.168.206.xx' -DnsSvr 192.168.206.21 -VMMemory 4GB
+
 # And two general purpose servers
 # New-RKVM -name 'SRV1'  -VmPath $path -ReferenceVHD $ref -Network 'Internal' -UnattendXML $unadj -Verbose -IPAddr '10.10.10.50/24' -DNSSvr 10.10.10.10  -VMMemory 4GB
 # New-RKVM -name 'SRV2'  -VmPath $path -ReferenceVHD $ref -Network 'Internal' -UnattendXML $unadj -Verbose -IPAddr '10.10.10.50/24' -DNSSvr 10.10.10.10  -VMMemory 4GB
@@ -252,7 +254,7 @@ New-RKVM -name 'Temp' -VmPath $path -ReferenceVHD $ref -Network "External" -Unat
 # New-RKVM -name "WSUS1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.251/24' -DNSSvr 10.10.10.10 -VMMemory 1gb
 
 #    Container Host
- New-RKVM -name "CH1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
+ New-RKVM -name "CH1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '192.168.206.43/24' -DNSSvr 192.168.206.21 -VMMemory 4gb
 
 # for testing only
 # New-RKVM -name 'DC1X'  -VmPath $path -ReferenceVHD $ref -Network 'Internal' -UnattendXML $una -Verbose -IPAddr '10.10.10.10/24' -DNSSvr 10.10.10.10  -VMMemory 2gb 
