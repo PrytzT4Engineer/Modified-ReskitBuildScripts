@@ -28,10 +28,10 @@ Function New-RKVM {
     $Name             = 'DC1',
     $VmPath           = 'D:\VMs',
     $ReferenceVHD     = 'D:\Build',
-    $Network          = 'Internal',
+    $Network          = 'External',
     [int64] $VMMemory = 1024mb,
     $UnattendXML      = 'D:\Scripts\unattend.xml',
-    $IPAddr           = '192.168.206.44/24',
+    $IPAddr           = '192.168.206.4/24',
     $DnsSvr           = '192.168.206.21',
     $CPUCount = 4,
     $NHV = $false
@@ -45,7 +45,7 @@ Function New-RKVM {
   # Check to see if Switch exists (passed in $Network variable)
   If (Get-VMSwitch $Network) { Write-Verbose "VM Switch $Network Exists" } else {
     Write-Verbose "VM Switch not here  : [$Network]"
-    New-VMSwitch -Name Internal -SwitchType Internal
+    New-VMSwitch -Name $Network -NetAdapterName Ethernet
     Write-Verbose "Switch Created      : [$Network]"
   }
 
@@ -60,7 +60,7 @@ Function New-RKVM {
   Write-Verbose "Creating VM           : [$Name]"
   Write-Verbose "VHD path              : [$VHDPath]"
   Write-Verbose "VM Path               : [$Path\$Name]"
-  $VM = New-VM –Name $Name –MemoryStartupBytes $VMMemory –VHDPath $VHDPath -Generation2 -SwitchName $Network -Path $vmPath 
+  $VM = New-VM –Name $Name –MemoryStartupBytes $VMMemory –VHDPath $VHDPath -SwitchName $Network -Path $vmPath -Generation 2
   Write-Verbose "New VM Created        : [$($VM.Name)]"
 
   # Mount the newly created VHD on the local machine
@@ -121,6 +121,9 @@ Set-VM -Name $name -DynamicMemory
 Set-VM -Name $name -MemoryMinimumBytes $VMMemory
 Set-VM -Name $name -AutomaticStartAction Nothing
 Set-VM -Name $name -AutomaticStopAction ShutDown
+Set-VM -Name $name -ProcessorCount $CPUCount
+
+Set-VMProcessor -Name $name -ExposeVirtualizationExtensions $NHV
 
 #    Show what has been created!
 "VM Fully Created:"
@@ -146,7 +149,7 @@ $Iso = 'D:\Build\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782'
 
 # Where we put the reference VHDX
 # Be careful here - make sure this is the file you just created in Create-ReferenceVHDX
-$Ref = 'D:\Build\Ref2022.vhdx'
+$Ref = 'D:\Build\Ref2019.vhdx'
 
 # Path were VMs, VHDXs and unattend.txt files live
 $Path = 'D:\Build'
@@ -183,8 +186,8 @@ $Start = Get-Date
 #
 #  FOR GENERAL USE 
 #    Create DC1 as NON-domain joined
-# New-RKVM -name 'DC1'  -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $una -Verbose -IPAddr '10.10.10.10/24' -DNSSvr 10.10.10.10  -VMMemory 4gb 
-New-RKVM -name 'Temp' -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.44' -DnsSvr 192.168.206.21 -VMMemory 4GB
+# New-RKVM -name 'DC1'  -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $una -Verbose -IPAddr '10.10.10.10/24' -DNSSvr 10.10.10.10  -VMMemory 4gb
+New-RKVM -name 'DHCP' -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.31/24' -DnsSvr 192.168.206.21 -VMMemory 4GB -NHV $false
 
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
@@ -254,7 +257,7 @@ New-RKVM -name 'Temp' -VmPath $path -ReferenceVHD $ref -Network "External" -Unat
 # New-RKVM -name "WSUS1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.251/24' -DNSSvr 10.10.10.10 -VMMemory 1gb
 
 #    Container Host
- New-RKVM -name "CH1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '192.168.206.43/24' -DNSSvr 192.168.206.21 -VMMemory 4gb
+# New-RKVM -name "CH1" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '192.168.206.43/24' -DNSSvr 192.168.206.21 -VMMemory 4gb
 
 # for testing only
 # New-RKVM -name 'DC1X'  -VmPath $path -ReferenceVHD $ref -Network 'Internal' -UnattendXML $una -Verbose -IPAddr '10.10.10.10/24' -DNSSvr 10.10.10.10  -VMMemory 2gb 
