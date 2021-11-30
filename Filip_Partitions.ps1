@@ -13,7 +13,7 @@ $ISOImage = Get-DiskImage -ImagePath $ISO | Get-Volume
 # Sätter Drivebokstaven (exempel D:)
 $ISODrive = [string]$ISOImage.DriveLetter + ':'
 
-$VMDisk01 = New-VHD –Path $RefVHDXPath -Size 64GB
+$VMDisk01 = New-VHD -Path $RefVHDXPath -Size 64GB
 Mount-DiskImage -ImagePath $RefVHDXPath
 $VHDDisk = Get-DiskImage -ImagePath $RefVHDXPath | Get-Disk
 $VHDDiskNumber = [string]$VHDDisk.Number
