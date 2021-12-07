@@ -84,9 +84,11 @@ namespace Game
             Console.ForegroundColor = ConsoleColor.Green;
             // Skriver ut berättelsen "\n" betyder ny rad
             // 0 = namn, 1 = pronomen (han/hon), 2 = djur, 3 = verb (dåtid), 4 = adverb, 5 = adjektiv, 6 = adjketiv, 7 = substantiv, 
-            Berättelse = "Idag gick {0} till ett zoo, där såg {1} en/ett {2} som hoppade upp och ner i sitt träd. Djuret {3} {4} genom den {5} tunneln som leder till djurets {6} {7}.\n {0} hade jordnötter {8} {9}";
+            Berättelse = "Idag gick {0} till ett zoo, där såg {1} en/ett {2} som hoppade upp och ner i sitt träd. Djuret {3} {4} genom den {5} tunneln som leder till djurets {6} {7}.\n {8} {9}";
             Console.WriteLine(Berättelse, Ord[0], Ord[1], Ord[2], Ord[3], Ord[4], Ord[5], Ord[6], Ord[7], Ord[8], Ord[9]);
 
+            // Länk till historien
+            https://irp-cdn.multiscreensite.com/ec2b0ab8/files/uploaded/Mad%20Libs.pdf
         }
         static void Slut()
         {
