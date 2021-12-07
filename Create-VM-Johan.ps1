@@ -186,7 +186,7 @@ $Start = Get-Date
 #
 #  FOR GENERAL USE 
 #    Create DC1 as NON-domain joined
-New-RKVM -name 'DHCP1'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.203.32/24' -DNSSvr 192.168.203.30  -VMMemory 4gb -CPUCounts 4 -NHV $false
+New-RKVM -name 'DHCP1'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.31/24' -DNSSvr 192.168.206.21  -VMMemory 4gb -CPUCounts 4 -NHV $false
 #
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
@@ -207,7 +207,7 @@ New-RKVM -name 'DHCP1'  -VmPath $path -ReferenceVHD $ref -Network "External" -Un
 #  Your starting point depends on which book!
 
 # 
-#  For Packt POWERSHELL 7.1 Book - chap 1,2,3) - not domain joined till later
+# For Packt POWERSHELL 7.1 Book - chap 1,2,3) - not domain joined till later
 # New-RKVM -Name 'SRV1'  -VmPath $path -ReferenceVHD $ref -Network 'Internal' -UnattendXML $una -Verbose -IPAddr '10.10.10.50/24' -DNSSvr 10.10.10.10  -VMMemory 4GB
 
 # for testing only
