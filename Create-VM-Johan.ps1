@@ -149,7 +149,7 @@ $Iso = 'D:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782.iso'
 
 # Where we put the reference VHDX
 # Be careful here - make sure this is the file you just created in Create-ReferenceVHDX
-$Ref = 'D:\Build\Ref2022.vhdx'
+$Ref = 'D:\Build\Ref2019.vhdx'
 
 # Path were VMs, VHDXs and unattend.txt files live
 $Path = 'D:\Build'
