@@ -27,12 +27,12 @@ Function New-RKVM {
   Param ( 
     $Name             = 'TMP',
     $VmPath           = 'D:\Build',
-    $ReferenceVHD     = 'D:\Build\Ref2020.vhdx',
+    $ReferenceVHD     = 'D:\Build\Ref2019.vhdx',
     $Network          = 'External',
     [int64] $VMMemory = 1024mb,
-    $UnattendXML      = '"C:\Build\unattend.xml',
-    $IPAddr           = '192.168.203.29/24',
-    $DnsSvr           = '192.168.203.30',
+    $UnattendXML      = 'D:\Build\unattend.xml',
+    $IPAddr           = '192.168.206.29/24',
+    $DnsSvr           = '192.168.206.21',
     $CPUCounts = 4 ,
     $NHV = $false
   )
