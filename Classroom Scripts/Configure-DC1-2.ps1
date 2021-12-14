@@ -32,18 +32,18 @@ If ((Get-Service adws).Status -NE 'Running') {
 Write-Verbose 'ADWS Service running!'
 
 #    Set Credentials for use in this configuration block
-$User       = 'Reskit\Administrator'
-$Password   = 'Pa$$w0rd'
+$User       = 'Filip\Administrator'
+$Password   = 'Passw0rd'
 $PasswordSS = ConvertTo-SecureString  -String $Password -AsPlainText -Force
-$Dom        = 'Reskit'
+$Dom        = 'Filip'
 $CredRK     = New-Object -Typename System.Management.Automation.PSCredential -Argumentlist $User,$PasswordSS
 
 # Define registry path for autologon, then set admin logon
 Write-Verbose -Message 'Setting Autologon'
 $RegPath  = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
 $user     = 'Administrator'
-$password = 'Pa$$w0rd'
-$dom      = 'Reskit'  
+$password = 'Passw0rd'
+$dom      = 'Filip'  
 Set-ItemProperty -Path $RegPath -Name AutoAdminLogon    -Value 1         -EA 0  
 Set-ItemProperty -Path $RegPath -Name DefaultUserName   -Value $User     -EA 0  
 Set-ItemProperty -Path $RegPath -Name DefaultPassword   -Value $Password -EA 0
@@ -64,19 +64,19 @@ Set-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name Con
 Restart-Service -Name DHCPServer –Force 
 Write-Verbose 'DHCP Installed'
 
-Add-DhcpServerV4Scope -Name "ReskitNet0" `
-                      -StartRange 10.10.10.150 `
-                      -EndRange 10.10.10.199 `
+Add-DhcpServerV4Scope -Name "Filip" `
+                      -StartRange 192.168.206.1 `
+                      -EndRange 192.168.206.100 `
                       -SubnetMask 255.255.255.0
-Write-Verbose 'Reskitnet0 DHCP Scope added'
+Write-Verbose 'Filip DHCP Scope added'
 
 # Set Option Values
-Set-DhcpServerV4OptionValue -DnsDomain Reskit.Org `
-                            -DnsServer 10.10.10.10
+Set-DhcpServerV4OptionValue -DnsDomain Filip.local `
+                            -DnsServer 192.168.206.21
 
 # Authorise the DCHP server in the AD                            
 Write-Verbose 'Authorising DHCP Server in AD'                            
-Add-DhcpServerInDC -DnsName Dc1.reskit.org
+Add-DhcpServerInDC -DnsName Dc1.Filip.local
 Write-Verbose 'DHCP Server authorised in AD'
 
 #    Add users to the AD and then add them to some groups
@@ -111,24 +111,24 @@ Write-Verbose "DC1 Configuration took $(($FinishTime - $StartTime).TotalSeconds.
 $VerbosePreference = 'Continue'
 
 #    Set Credentials
-$Username   = "Reskit\administrator"
+$Username   = "Filip\administrator"
 $Password   = 'Pa$$w0rd'
 $PasswordSS = ConvertTo-SecureString  -String $Password -AsPlainText -Force
 $CredRK     = New-Object -Typename System.Management.Automation.PSCredential -Argumentlist $Username,$PasswordSS
 
 #    Following code used to test the credentials. Remove the comments on next two lines the first time you 
 #    run this script
-Invoke-Command -ComputerName DC1.reskit.org -ScriptBlock {ipconfig;hostname} -Credential $Credrk -verbose
+Invoke-Command -ComputerName DC1.Filip.local -ScriptBlock {ipconfig;hostname} -Credential $Credrk -verbose
 Pause
 
 # now run the script to finish configuring dc1
-Invoke-Command -ComputerName DC1.Reskit.org -Scriptblock $conf -Credential $CredRK -verbose
+Invoke-Command -ComputerName Dc1.Filip.local -Scriptblock $conf -Credential $CredRK -verbose
 Write-Verbose 'Configuration complete, rebooting'
 pause
 
 #     OK - script block has completed - reboot the system and wait till it comes up
 Write-Verbose  'Restarting'
-Restart-Computer -ComputerName DC1.reskit.org  -Wait -For PowerShell -Force -Credential $CredRK
+Restart-Computer -ComputerName Dc1.Filip.local -Wait -For PowerShell -Force -Credential $CredRK
  
 #    Finally, run a post-DCPromo snapshot
 # Checkpoint-VM -VM $(Get-VM DC1) -SnapshotName "DC1 - post configuration by Configure-DC1-2.ps1" 
