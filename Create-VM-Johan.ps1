@@ -186,7 +186,7 @@ $Start = Get-Date
 #
 #  FOR GENERAL USE 
 #    Create DC1 as NON-domain joined
-New-RKVM -name 'DHCP1'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.31/24' -DNSSvr 192.168.206.21  -VMMemory 4gb -CPUCounts 4 -NHV $false
+New-RKVM -name 'WDS'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.41/24' -DNSSvr 192.168.206.21  -VMMemory 8gb -CPUCounts 4 -NHV $false
 #
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
