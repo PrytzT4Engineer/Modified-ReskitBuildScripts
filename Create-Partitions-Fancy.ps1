@@ -1,3 +1,5 @@
+# This script is considered fancy because it uses the "verbose" commands and is thus more user-friendly
+
 [Cmdletbinding()]
 Param()
 
