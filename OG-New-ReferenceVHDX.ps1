@@ -22,7 +22,6 @@ Param()
 # Version 7.0 - new for Packt 7.0 book - removed differencing disk. Reference disk now just a master copy
 #             - Also used latest Win 2019 Server (aug 2020)
 
-
 # Define a function to create a reference VHDX. 
 Function New-ReferenceVHDX {
 

@@ -1,4 +1,4 @@
-﻿#  create volumes
+﻿# create volumes
 # Assume new VHDX files just added as disks
 # run on srv1
 
@@ -30,7 +30,6 @@ New-Volume -Disk $DF -FileSystem NTFS -DriveLetter F -FriendlyName 'SRV2-F'
 New-Volume -Disk $DG -FileSystem NTFS -DriveLetter G -FriendlyName 'SRV2-G'
 }
 Invoke-Command -ComputerName SRV2 -ScriptBlock $SB
-
 
 Test-SRTopology -SourceComputerName SR-SRV05 -SourceVolumeName f: -SourceLogVolumeName g: `
 -DestinationComputerName SR-SRV06 -DestinationVolumeName f: -DestinationLogVolumeName g: `
