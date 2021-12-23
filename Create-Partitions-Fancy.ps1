@@ -1,4 +1,4 @@
-# This script is considered fancy because it uses the "verbose" commands and is thus more user-friendly
+# This script is considered Fancy because it uses the "verbose" commands and is thus more user-friendly
 
 [Cmdletbinding()]
 Param()

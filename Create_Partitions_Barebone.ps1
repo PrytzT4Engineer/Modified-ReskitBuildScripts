@@ -1,3 +1,4 @@
+# This script is considered Barebone because it has no verbose or other "cosmetic" commands
 Function New-RefVHDX {
 
     # Parametrar
