@@ -2,7 +2,7 @@
 $conf = {
 $VerbosePreference = 'Continue'
 $Username   = "Reskit\Administrator"
-$PasswordSS = ConvertTo-SecureString 'Pa$$w0rd' -AsPlainText -Force
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # Import server manager module, but quietly
@@ -36,7 +36,7 @@ Invoke-Gpupdate -Target Computer -Force
 $conf2 = {
 $VerbosePreference = 'Continue'
 $Username   = "Reskit\Administrator"
-$PasswordSS = ConvertTo-SecureString 'Pa$$w0rd' -AsPlainText -Force
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # SSL enable the site to make Certsv happy
@@ -76,7 +76,7 @@ Write-Verbose "Starting creation of CA on DC1 at $StartTime"
 $VerbosePreference = 'Continue'
 
 # Invoke the firt script block, $Conf, on DC1 using the folowing credentials
-$PasswordSS = ConvertTo-SecureString 'Pa$$w0rd' -AsPlainText -Force
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
 $Username   = "reskit\administrator"
 $CredRk     = New-Object system.management.automation.PSCredential $username,$PasswordSS
 Write-Verbose 'Runing Conf block on DC1'
