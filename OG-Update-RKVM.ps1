@@ -63,7 +63,6 @@ Start-VM -VMName $VMName
 Write-Verbose "VM $VMName restarted"
 }
 
-
 # Example use:
 # Update-RKVM -VMName SRV1 -NHV $true -verbose -CPUCount 6
 # Update-RKVM -VMName SRV2 -NHV $true -verbose -CPUCount 6
