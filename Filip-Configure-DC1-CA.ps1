@@ -1,7 +1,7 @@
 ﻿# Define first config block that creates the CA 
 $conf = {
 $VerbosePreference = 'Continue'
-$Username   = "Reskit\Administrator"
+$Username   = "ADCS02\Administrator"
 $PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
@@ -15,9 +15,9 @@ $Mods = @('AD-Certificate','Adcs-Cert-Authority', 'Adcs-Enroll-Web-Svc','Adcs-We
 Install-WindowsFeature $Mods -Verbose -IncludemanagementTools
 
 # Now install the CA
-Write-Verbose 'Installing CA on DC1'
+Write-Verbose 'Installing CA on ADCS02'
 # Specify CA details to be used to create this CA
-$CaParmsHT = @{CACommonName = 'ReskitCA';
+$CaParmsHT = @{CACommonName = 'FilipCA';
                CAType       = 'EnterpriseRootCA';
                KeyLength    = 2048;
                Cred         = $credrk 
@@ -35,34 +35,34 @@ Invoke-Gpupdate -Target Computer -Force
 # This is second script block - run after the reboot.
 $conf2 = {
 $VerbosePreference = 'Continue'
-$Username   = "Reskit\Administrator"
+$Username   = "ADCS02\Administrator"
 $PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # SSL enable the site to make Certsv happy
-Write-Verbose 'Creating SSL Binding for DC1'
+Write-Verbose 'Creating SSL Binding for ADCS02'
 Import-Module WebAdministration -Verbose:$false
 New-WebBinding -Name "Default Web Site" -IP "*" -Port 443 -Protocol https
 
-# We now need to wait until the CA has started up and has created a cert for DC1.
+# We now need to wait until the CA has started up and has created a cert for ADCS02.
 # This is fairly quick, but may need a GPUpdate to create the cert. So we first force
 # a GPUpdate. Then we go to sleep for 5 seconds to enable the Cert to be fully registered
 # and. We then poll for the cert sleeping 5 seconds between checks.
-Write-Verbose "Waiting for DC1 Cert to be created"
+Write-Verbose "Waiting for ADCS02 Cert to be created"
 Write-Verbose 'Force a GPUpdate first, then wait...'
 Gpupdate /Target:Computer /Force
 
 # Next check if the cert is there, if not wait and try again
-While (! (Get-ChildItem Cert:\LocalMachine\My | Where Subject -Match 'DC1')) {
-  Write-Host "Sleeping for 5 seconds waiting for DC1 cert..."
+While (! (Get-ChildItem Cert:\LocalMachine\My | Where Subject -Match 'ADCS02')) {
+  Write-Host "Sleeping for 5 seconds waiting for ADCS02 cert..."
   Start-sleep -seconds 5
 }
 
 # OK - now we're here, cert has been created - so get it and display
-$Cert=(Get-ChildItem Cert:\localmachine\my | Where Subject -Match 'DC1')
+$Cert=(Get-ChildItem Cert:\localmachine\my | Where Subject -Match 'ADCS02')
 Write-Verbose "Cert being used is: [$($cert.thumbprint)]"
 
-# Now set binding with the DC1 cert
+# Now set binding with the ADCS02 cert
 Write-Verbose "Setting SSL bindings with this cert"
 New-Item IIS:\SSLBindings\0.0.0.0!443 -value $Cert
 
@@ -72,28 +72,28 @@ New-Item IIS:\SSLBindings\0.0.0.0!443 -value $Cert
 
 # Start of the main script
 $StartTime = Get-Date
-Write-Verbose "Starting creation of CA on DC1 at $StartTime"
+Write-Verbose "Starting creation of CA on ADCS02 at $StartTime"
 $VerbosePreference = 'Continue'
 
-# Invoke the firt script block, $Conf, on DC1 using the folowing credentials
+# Invoke the firt script block, $Conf, on ADCS02 using the folowing credentials
 $PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
-$Username   = "reskit\administrator"
+$Username   = "ADCS02\administrator"
 $CredRk     = New-Object system.management.automation.PSCredential $username,$PasswordSS
-Write-Verbose 'Runing Conf block on DC1'
-Invoke-command -ComputerName DC1 -Scriptblock $Conf -Credential $CredRK -Verbose
+Write-Verbose 'Runing Conf block on ADCS02'
+Invoke-Command -VMName ADCS02 -Scriptblock $Conf -Credential $CredRK -Verbose
 Write-Verbose 'Completed basic CA installation, let us reboot'
 
 # Now reboot
 Write-Verbose 'Rebooting system, please be patient'
-Restart-Computer -ComputerName DC1  -Wait -For PowerShell -Force -Credential $CredRK
+Restart-Computer -ComputerName ADCS02  -Wait -For PowerShell -Force -Credential $CredRK
 
 # and now after the reboot, finish off the CA configuration
-Write-Verbose 'Running $Conf2 block on DC1'
-Invoke-Command -ComputerName DC1 -Scriptblock $Conf2 -Credential $CredRK -Verbose
+Write-Verbose 'Running $Conf2 block on ADCS02'
+Invoke-Command -VMName ADCS02 -Scriptblock $Conf2 -Credential $CredRK -Verbose
 
 # Now reboot again
 Write-Verbose "And a final reboot"
-Restart-Computer -ComputerName DC1  -Wait -For PowerShell -Force -Credential $CredRK
+Restart-Computer -ComputerName ADCS02  -Wait -For PowerShell -Force -Credential $CredRK
 
 # Print out stats and quit
 $Finishtime = Get-Date
