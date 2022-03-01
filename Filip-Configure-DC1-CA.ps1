@@ -85,7 +85,7 @@ Write-Verbose "Starting creation of CA on ADCS02 at $StartTime"
 $VerbosePreference = 'Continue'
 
 # Skapar en snapshot innan scriptet körs
-$VMNAME = ADCS02
+$VMNAME = 'ADCS02'
 Checkpoint-VM -Name $VMNAME -SnapshotName BeforeScript-FilipConfDC1CA
 
 # Invoke the firt script block, $Conf, on ADCS02 using the folowing credentials
