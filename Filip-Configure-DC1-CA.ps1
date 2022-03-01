@@ -1,8 +1,14 @@
-﻿# Define first config block that creates the CA 
+﻿################################################################################
+
+# VARIABLERNA $Username och $PasswordSS MÅSTE DUBBELKOLLAS INNAN DU KÖR SCRIPTET
+
+################################################################################
+
+# Define first config block that creates the CA 
 $conf = {
 $VerbosePreference = 'Continue'
 $Username   = "ADCS02\Administrator"
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # Import server manager module, but quietly
@@ -36,7 +42,7 @@ Invoke-Gpupdate -Target Computer -Force
 $conf2 = {
 $VerbosePreference = 'Continue'
 $Username   = "ADCS02\Administrator"
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # SSL enable the site to make Certsv happy
@@ -76,7 +82,7 @@ Write-Verbose "Starting creation of CA on ADCS02 at $StartTime"
 $VerbosePreference = 'Continue'
 
 # Invoke the firt script block, $Conf, on ADCS02 using the folowing credentials
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
 $Username   = "ADCS02\administrator"
 $CredRk     = New-Object system.management.automation.PSCredential $username,$PasswordSS
 Write-Verbose 'Runing Conf block on ADCS02'
