@@ -92,7 +92,7 @@ Checkpoint-VM -Name $VMNAME -SnapshotName BeforeScript-FilipConfDC1CA
 $PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
 $Username   = "ADCS02\administrator"
 $CredRk     = New-Object system.management.automation.PSCredential $username,$PasswordSS
-Write-Verbose 'Runing Conf block on ADCS02'
+Write-Verbose 'Running Conf block on ADCS02'
 Invoke-Command -VMName ADCS02 -Scriptblock $Conf -Credential $CredRK -Verbose
 Write-Verbose 'Completed basic CA installation, let us reboot'
 
