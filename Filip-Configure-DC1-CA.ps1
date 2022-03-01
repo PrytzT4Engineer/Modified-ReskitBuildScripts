@@ -4,14 +4,11 @@
 
 ################################################################################
 
-
-
-
 # Define first config block that creates the CA 
 $conf = {
 $VerbosePreference = 'Continue'
 $Username   = "ADCS02\Administrator"
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'abc123!' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # Import server manager module, but quietly
@@ -45,7 +42,7 @@ Invoke-Gpupdate -Target Computer -Force
 $conf2 = {
 $VerbosePreference = 'Continue'
 $Username   = "ADCS02\Administrator"
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'abc123!' -AsPlainText -Force # Lösenord, Password
 $CredRk     = New-Object System.Management.Automation.PSCredential $Username,$PasswordSS
 
 # SSL enable the site to make Certsv happy
@@ -89,7 +86,7 @@ $VMNAME = 'ADCS02'
 Checkpoint-VM -Name $VMNAME -SnapshotName BeforeScript-FilipConfDC1CA
 
 # Invoke the firt script block, $Conf, on ADCS02 using the folowing credentials
-$PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
+$PasswordSS = ConvertTo-SecureString 'abc123!' -AsPlainText -Force # Lösenord, Password
 $Username   = "ADCS02\administrator"
 $CredRk     = New-Object system.management.automation.PSCredential $username,$PasswordSS
 Write-Verbose 'Running Conf block on ADCS02'
