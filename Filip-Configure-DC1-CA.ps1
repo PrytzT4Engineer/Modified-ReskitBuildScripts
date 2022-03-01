@@ -4,6 +4,9 @@
 
 ################################################################################
 
+
+
+
 # Define first config block that creates the CA 
 $conf = {
 $VerbosePreference = 'Continue'
@@ -81,6 +84,10 @@ $StartTime = Get-Date
 Write-Verbose "Starting creation of CA on ADCS02 at $StartTime"
 $VerbosePreference = 'Continue'
 
+# Skapar en snapshot innan scriptet körs
+$VMNAME = ADCS02
+Checkpoint-VM -Name $VMNAME -SnapshotName BeforeScript-FilipConfDC1CA
+
 # Invoke the firt script block, $Conf, on ADCS02 using the folowing credentials
 $PasswordSS = ConvertTo-SecureString 'P@ssw0rd!' -AsPlainText -Force # Lösenord, Password
 $Username   = "ADCS02\administrator"
@@ -100,6 +107,9 @@ Invoke-Command -VMName ADCS02 -Scriptblock $Conf2 -Credential $CredRK -Verbose
 # Now reboot again
 Write-Verbose "And a final reboot"
 Restart-Computer -ComputerName ADCS02  -Wait -For PowerShell -Force -Credential $CredRK
+
+# Skapar en snapshot efter scriptet körs
+Checkpoint-VM -Name $VMNAME -SnapshotName AfterScript-FilipConfDC1CA
 
 # Print out stats and quit
 $Finishtime = Get-Date
