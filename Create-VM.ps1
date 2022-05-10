@@ -26,11 +26,11 @@ Function New-RKVM {
   [Cmdletbinding()]
   Param ( 
     $Name             = 'TMP',
-    $VmPath           = 'D:\Build',
-    $ReferenceVHD     = 'D:\Build\Ref2019.vhdx',
+    $VmPath           = 'C:\Build',
+    $ReferenceVHD     = 'C:\Build\Ref2019.vhdx',
     $Network          = 'External',
     [int64] $VMMemory = 1024mb,
-    $UnattendXML      = 'D:\Build\unattend.xml',
+    $UnattendXML      = 'C:\Build\unattend.xml',
     $IPAddr           = '192.168.206.29/24',
     $DnsSvr           = '192.168.206.21',
     $CPUCounts = 4 ,
@@ -145,18 +145,18 @@ Write-Verbose ("Creating VM ($name) took {0} seconds" -f ($FinishTime - $Startti
 #       CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS     #
 
 # Location of Server 2012 DVD Iso Image
-$Iso = 'D:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782.iso'
+$Iso = 'C:\iso\en_windows_server_2019_updated_jun_2021_x64_dvd_a2a2f782.iso'
 
 # Where we put the reference VHDX
 # Be careful here - make sure this is the file you just created in Create-ReferenceVHDX
-$Ref = 'D:\Build\Ref2019.vhdx'
+$Ref = 'C:\Build\Ref2019.vhdx'
 
 # Path were VMs, VHDXs and unattend.txt files live
-$Path = 'D:\Build'
+$Path = 'C:\Build'
 
 # Location of Unattend.xml - first for workstation systems, second for domain joined systems 
-$Una   = 'D:\Build\UnAttend.xml'     # workgroup memeber
-$Unadj = 'D:\Build\UnAttend.dj.xml'  # joined to reskit.org
+$Una   = 'C:\Build\UnAttend.xml'     # workgroup memeber
+$Unadj = 'C:\Build\UnAttend.dj.xml'  # joined to reskit.org
 
 #       CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS ===== CHECK THESE PATHS     #
 #######################################################################################################
@@ -186,7 +186,7 @@ $Start = Get-Date
 #
 #  FOR GENERAL USE 
 #    Create DC1 as NON-domain joined
-New-RKVM -name 'WDS'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.41/24' -DNSSvr 192.168.206.21  -VMMemory 8gb -CPUCounts 4 -NHV $false
+# New-RKVM -name 'WDS'  -VmPath $path -ReferenceVHD $ref -Network "External" -UnattendXML $una -Verbose -IPAddr '192.168.206.31/24' -DNSSvr 192.168.206.21  -VMMemory 8gb -CPUCounts 4 -NHV $false
 #
 #   SQL 2016
 # New-RKVM -name "SQL2016" -VmPath $path -ReferenceVHD $ref -Network "Internal" -UnattendXML $unadj -Verbose -IPAddr '10.10.10.221/24' -DNSSvr 10.10.10.10 -VMMemory 4gb
