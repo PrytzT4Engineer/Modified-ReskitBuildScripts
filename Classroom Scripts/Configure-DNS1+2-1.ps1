@@ -18,8 +18,8 @@ Write-Verbose "Starting configuration of DNS1 at: $StartTime    [$(hostname)]"
 #    Change below to alter the user
 $RegPath  = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
 $user     = 'Administrator'
-$password  = 'Pa$$w0rd'
-$dom      = 'Reskit'  
+$password  = 'P@ssw0rd'
+$dom      = 'Filip'  
 Set-ItemProperty -Path $RegPath -Name AutoAdminLogon    -Value 1         -EA 0  
 Set-ItemProperty -Path $RegPath -Name DefaultUserName   -Value $User     -EA 0  
 Set-ItemProperty -Path $RegPath -Name DefaultPassword   -Value $Password -EA 0
@@ -56,8 +56,8 @@ Write-Verbose "Configuring $(hostname) took $(($FinishTime - $StartTime).totalse
 # key Windows features labs need
 
 #     Set Credentials for DNS1 and 2
-$Username   = "Reskit\administrator"
-$PasswordSS = ConvertTo-SecureString  -string 'Pa$$w0rd' -AsPlainText -Force
+$Username   = "Filip\administrator"
+$PasswordSS = ConvertTo-SecureString  -string 'P@ssw0rd' -AsPlainText -Force
 $credrk     = New-Object -Typename  System.Management.Automation.PSCredential -Argumentlist $username,$PasswordSS
 
 #     Set Vervbose mode on
